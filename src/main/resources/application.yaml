@@ -1,0 +1,11 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: reactive-employee
+
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/employee_db
+    username: krishna
+    password: Krishna123
