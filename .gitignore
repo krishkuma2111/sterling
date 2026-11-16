@@ -65,4 +65,6 @@ mvn
 mvnw.cmd
 
 # ssh git ssh -T git@github.com
+reactor
+gcloud.txt
 
