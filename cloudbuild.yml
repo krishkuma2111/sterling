@@ -1,0 +1,53 @@
+steps:
+
+  # STEP 1: Build Spring Boot application
+  - name: 'maven:3.9.9-eclipse-temurin-21'
+    entrypoint: mvn
+    args:
+      - clean
+      - package
+      - -DskipTests
+
+  # STEP 2: Build Docker image
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - build
+      - -t
+      - asia-south1-docker.pkg.dev/$PROJECT_ID/containers/reactive-employee:$SHORT_SHA
+      - .
+
+  # STEP 3: Push Docker image to Artifact Registry
+  - name: 'gcr.io/cloud-builders/docker'
+    args:
+      - push
+      - asia-south1-docker.pkg.dev/$PROJECT_ID/containers/reactive-employee:$SHORT_SHA
+
+  # STEP 4: Update GKE Deployment image
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - set
+      - image
+      - deployment/reactive-employee
+      - reactive-employee=asia-south1-docker.pkg.dev/$PROJECT_ID/containers/reactive-employee:$SHORT_SHA
+      - -n
+      - employee-demo
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=asia-south1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=employee-cluster'
+
+  # STEP 5: Wait for deployment to finish
+  - name: 'gcr.io/cloud-builders/kubectl'
+    args:
+      - rollout
+      - status
+      - deployment/reactive-employee
+      - -n
+      - employee-demo
+      - --timeout=180s
+    env:
+      - 'CLOUDSDK_COMPUTE_ZONE=asia-south1-a'
+      - 'CLOUDSDK_CONTAINER_CLUSTER=employee-cluster'
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import com.sterling.employee.dto.EmployeeRequest;
 import com.sterling.employee.dto.EmployeeResponse;
@@ -45,5 +46,14 @@ public class EmployeeController {
 	    return ResponseEntity
 	            .ok()
 	            .body(response);
+	}
+
+	@GetMapping("/{id}")
+	public Mono<ResponseEntity<EmployeeResponse>> getById(
+        @PathVariable Long id) {
+
+    	return service.getById(id)
+            .map(ResponseEntity::ok)
+            .defaultIfEmpty(ResponseEntity.notFound().build());
 	}
 }
