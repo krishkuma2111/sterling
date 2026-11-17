@@ -6,6 +6,13 @@ spring:
     name: reactive-employee
 
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/employee_db
-    username: krishna
-    password: Krishna123
+    url: ${SPRING_R2DBC_URL:r2dbc:postgresql://localhost:5432/employee_db}
+    username: ${SPRING_R2DBC_USERNAME:krishna}
+    password: ${SPRING_R2DBC_PASSWORD:Krishna123}
+
+logging:
+  level:
+    org.springframework.r2dbc: INFO
+    io.r2dbc.postgresql: INFO
+    reactor.netty: INFO
+

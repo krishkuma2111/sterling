@@ -36,6 +36,12 @@ public class EmployeeService {
                 .map(this::convertToDTO);
     }
 
+    public Mono<EmployeeResponse> getById(Long id) {
+
+        return repository.findById(id)
+                .map(this::convertToDTO);
+    }
+
     private EmployeeResponse convertToDTO(Employee employee) {
         return new EmployeeResponse(
                 employee.getId(),
